@@ -2,6 +2,9 @@ import torch
 import torch.nn as nn
 import itertools
 import random
+import matplotlib.pyplot as plt
+
+
 def weights_init(m):
     classname = m.__class__.__name__
     if classname.find("Conv") != -1:
@@ -128,7 +131,7 @@ class ReplayBuffer:
 
 
 class CGAN_model():
-    def __init__(self, decay_epochs, epochs, _lr):
+    def __init__(self, decay_epochs, epochs, _lr, data_num):
         self.device = torch.device("cuda:0")
         self.netG_A2B = Generator().to(self.device)
         self.netG_B2A = Generator().to(self.device)
@@ -155,12 +158,21 @@ class CGAN_model():
         self.lr_scheduler_G = torch.optim.lr_scheduler.LambdaLR(self.optimizer_G, lr_lambda=lr_lambda)
         self.lr_scheduler_D_A = torch.optim.lr_scheduler.LambdaLR(self.optimizer_D_A, lr_lambda=lr_lambda)
         self.lr_scheduler_D_B = torch.optim.lr_scheduler.LambdaLR(self.optimizer_D_B, lr_lambda=lr_lambda)
+        self.data_num = data_num
+        self.num = 0
+        self.sum_g_losses = 0
+        self.sum_d_losses = 0
+        self.sum_identity_losses = 0
+        self.sum_gan_losses = 0
+        self.sum_cycle_losses = 0
+
         self.g_losses = []
         self.d_losses = []
-
         self.identity_losses = []
         self.gan_losses = []
         self.cycle_losses = []
+
+        self.epoch_x = [0]
 
         self.fake_A_buffer = ReplayBuffer()
         self.fake_B_buffer = ReplayBuffer()
@@ -255,6 +267,29 @@ class CGAN_model():
         errD_B.backward()
         # Update D_B weights
         self.optimizer_D_B.step()
+
+        self.num += 1
+        self.sum_g_losses += (errD_A + errD_B).item()
+        self.sum_d_losses += errG.item()
+        self.sum_gan_losses += (loss_GAN_A2B + loss_GAN_B2A).item()
+        self.sum_cycle_losses += (loss_cycle_ABA + loss_cycle_BAB).item()
+        self.sum_identity_losses += (loss_identity_A + loss_identity_B).item()
+
+        if self.num >= self.data_num:
+            self.g_losses.append(self.sum_g_losses/self.data_num)
+            self.d_losses.append(self.sum_d_losses/self.data_num)
+            self.identity_losses.append(self.sum_identity_losses/self.data_num)
+            self.gan_losses.append(self.sum_gan_losses/self.data_num)
+            self.cycle_losses.append(self.sum_cycle_losses/self.data_num)
+            self.epoch_x.append(self.epoch_x[-1]+1)
+
+            self.sum_g_losses = 0
+            self.sum_d_losses = 0
+            self.sum_gan_losses = 0
+            self.sum_cycle_losses = 0
+            self.sum_identity_losses = 0
+            self.num -= self.data_num
+
         return errD_A, errD_B, errG, loss_identity_A, loss_identity_B, loss_GAN_A2B, loss_GAN_B2A,loss_cycle_ABA, loss_cycle_BAB
 
 
@@ -265,3 +300,40 @@ class CGAN_model():
         self.lr_scheduler_G = torch.optim.lr_scheduler.LambdaLR(self.optimizer_G, lr_lambda=lr_lambda)
         self.lr_scheduler_D_A = torch.optim.lr_scheduler.LambdaLR(self.optimizer_D_A, lr_lambda=lr_lambda)
         self.lr_scheduler_D_B = torch.optim.lr_scheduler.LambdaLR(self.optimizer_D_B, lr_lambda=lr_lambda)
+
+    def plot_losses(self):
+
+        fig = plt.figure()
+        plt.plot(self.epoch_x[0:-1], self.g_losses)
+        plt.xlabel("epoch")
+        plt.ylabel("G loss")
+        plt.title("G loss")
+        fig.savefig('G loss.png')
+
+        fig = plt.figure()
+        plt.plot(self.epoch_x[0:-1], self.d_losses)
+        plt.xlabel("epoch")
+        plt.ylabel("D loss")
+        plt.title("D loss")
+        fig.savefig('D loss.png')
+
+        fig = plt.figure()
+        plt.plot(self.epoch_x[0:-1], self.identity_losses)
+        plt.xlabel("epoch")
+        plt.ylabel("Identity loss")
+        plt.title("Identity loss")
+        fig.savefig('Identity loss.png')
+
+        fig = plt.figure()
+        plt.plot(self.epoch_x[0:-1], self.cycle_losses)
+        plt.xlabel("epoch")
+        plt.ylabel("Cycle loss")
+        plt.title("Cycle loss")
+        fig.savefig('Cycle loss.png')
+
+        fig = plt.figure()
+        plt.plot(self.epoch_x[0:-1], self.gan_losses)
+        plt.xlabel("epoch")
+        plt.ylabel("GAN loss")
+        plt.title("GAN loss")
+        fig.savefig('GAN loss.png')
