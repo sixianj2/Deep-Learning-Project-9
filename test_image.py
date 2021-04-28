@@ -21,7 +21,7 @@ torch.manual_seed(manualSeed)
 
 cudnn.benchmark = True
 
-if torch.cuda.is_available():
+if torch.cuda.is_available() and not cuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
 device = torch.device("cuda:0")
