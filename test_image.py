@@ -6,11 +6,10 @@ import torch.utils.data.distributed
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from PIL import Image
-
 from model import CGAN_model
 
 file_p ="data/trump2biden/train/A/0.jpg"
-model_name="weights/trump2biden/netG_A2B_epoch_3.pth"
+model_name="weights/trump2biden/netG_A2B.pth"
 image_size=256
 cuda = True
 
@@ -27,7 +26,7 @@ if torch.cuda.is_available() and not cuda:
 device = torch.device("cuda:0")
 
 # create model
-cgan_model = CGAN_model(100, 200, 0.0002)
+cgan_model = CGAN_model(100, 200, 0.0002, 1)
 generator = cgan_model.netG_A2B
 
 # Load state dicts
