@@ -120,7 +120,7 @@ for epoch in range(0, epochs):
     cgan_model.Update_lr(epoch, epochs, decay_epochs)
 
 # save last check pointing
-torch.save(netG_A2B.state_dict(), f"weights/{dataset_p}/netG_A2B.pth")
-torch.save(netG_B2A.state_dict(), f"weights/{dataset_p}/netG_B2A.pth")
-torch.save(netD_A.state_dict(), f"weights/{dataset_p}/netD_A.pth")
-torch.save(netD_B.state_dict(), f"weights/{dataset_p}/netD_B.pth")
+torch.save(cgan_model.netG_A2B.state_dict(), f"weights/{dataset_p}/netG_A2B.pth")
+torch.save(cgan_model.netG_B2A.state_dict(), f"weights/{dataset_p}/netG_B2A.pth")
+torch.save(cgan_model.netD_A.state_dict(), f"weights/{dataset_p}/netD_A.pth")
+torch.save(cgan_model.netD_B.state_dict(), f"weights/{dataset_p}/netD_B.pth")
