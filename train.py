@@ -9,12 +9,12 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from PIL import Image
 from tqdm import tqdm
-
+import matplotlib.pyplot as plt
 from model import CGAN_model
 
 dataroot = "./data"
-dataset_p = "facades"
-epochs = 200
+dataset_p = "trump2biden"
+epochs = 3
 decay_epochs = 100
 batch_size = 1
 lr = 0.0002
@@ -71,7 +71,7 @@ try:
 except OSError:
     pass
 
-cgan_model = CGAN_model(decay_epochs, epochs, lr)
+cgan_model = CGAN_model(decay_epochs, epochs, lr, len(dataloader)-1)
 
 for epoch in range(0, epochs):
     progress_bar = tqdm(enumerate(dataloader), total=len(dataloader))
@@ -118,6 +118,9 @@ for epoch in range(0, epochs):
     torch.save(cgan_model.netD_B.state_dict(), f"weights/{dataset_p}/netD_B_epoch_{epoch}.pth")
 
     cgan_model.Update_lr(epoch, epochs, decay_epochs)
+
+cgan_model.plot_losses()
+
 
 # save last check pointing
 torch.save(cgan_model.netG_A2B.state_dict(), f"weights/{dataset_p}/netG_A2B.pth")
