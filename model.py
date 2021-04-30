@@ -267,10 +267,10 @@ class CGAN_model():
         errD_B.backward()
         # Update D_B weights
         self.optimizer_D_B.step()
-
+        
         self.num += 1
-        self.sum_g_losses += (errD_A + errD_B).item()
-        self.sum_d_losses += errG.item()
+        self.sum_g_losses += errG.item()
+        self.sum_d_losses += (errD_A + errD_B).item()
         self.sum_gan_losses += (loss_GAN_A2B + loss_GAN_B2A).item()
         self.sum_cycle_losses += (loss_cycle_ABA + loss_cycle_BAB).item()
         self.sum_identity_losses += (loss_identity_A + loss_identity_B).item()
