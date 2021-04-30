@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 from model import CGAN_model
 
 dataroot = "./data"
-dataset_p = "trump2biden"
-epochs = 3
+dataset_p = "prof2drawing"
+epochs = 500
 decay_epochs = 100
 batch_size = 1
 lr = 0.0002
