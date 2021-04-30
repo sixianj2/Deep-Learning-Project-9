@@ -312,6 +312,7 @@ class CGAN_model():
 
         fig = plt.figure()
         plt.plot(self.epoch_x[0:-1], self.d_losses)
+        plt.ylim([0, 2])
         plt.xlabel("epoch")
         plt.ylabel("D loss")
         plt.title("D loss")
