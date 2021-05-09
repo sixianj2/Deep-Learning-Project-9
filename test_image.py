@@ -8,8 +8,8 @@ import torchvision.utils as vutils
 from PIL import Image
 from model import CGAN_model
 
-file_p ="data/trump2biden/train/A/0.jpg"
-model_name="weights/trump2biden/netG_A2B.pth"
+file_p ="data/prof2drawing/train/A/0.jpg"
+model_name="weights/prof2drawing/netG_A2B.pth"
 image_size=256
 cuda = True
 
