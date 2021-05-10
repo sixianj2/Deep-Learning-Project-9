@@ -9,7 +9,7 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from tqdm import tqdm
 
-# from cyclegan_pytorch import Generator
+
 from cyclegan_pytorch import ImageDataset
 from model import CGAN_model
 dataroot = "./data"
@@ -54,16 +54,14 @@ except OSError:
 device = torch.device("cuda:0" if cuda else "cpu")
 
 # create model
-# netG_A2B = Generator().to(device)
-# netG_B2A = Generator().to(device)
+
 cgan_model = CGAN_model(100, 200, 0.0002, 1)
 netG_A2B = cgan_model.netG_A2B
 netG_B2A = cgan_model.netG_B2A
 
 
 # Load state dicts
-# netG_A2B.load_state_dict(torch.load(os.path.join("weights", str(dataset_p), "netG_A2B.pth")))
-# netG_B2A.load_state_dict(torch.load(os.path.join("weights", str(dataset_p), "netG_B2A.pth")))
+
 netG_A2B.load_state_dict(torch.load("weights/prof2drawing/netG_A2B.pth"))
 netG_B2A.load_state_dict(torch.load("weights/prof2drawing/netG_B2A.pth"))
 
