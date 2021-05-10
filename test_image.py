@@ -26,7 +26,7 @@ if torch.cuda.is_available() and not cuda:
 device = torch.device("cuda:0")
 
 # create model
-cgan_model = CGAN_model(100, 200, 0.0002, 1)
+cgan_model = CGAN_model(100, 500, 0.0002, 1)
 generator = cgan_model.netG_A2B
 
 # Load state dicts
