@@ -55,7 +55,7 @@ device = torch.device("cuda:0" if cuda else "cpu")
 
 # create model
 
-cgan_model = CGAN_model(100, 200, 0.0002, 1)
+cgan_model = CGAN_model(100, 500, 0.0002, 1)
 netG_A2B = cgan_model.netG_A2B
 netG_B2A = cgan_model.netG_B2A
 
